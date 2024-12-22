@@ -70,14 +70,14 @@
         <h1>To-Do List</h1>
     </div>
     <div class="add">
-        <form>
+        <form method="POST">
             <label for="taskName">Enter the Task:</label><br>
-            <input type="text" id="taskName" placeholder="Task" required><br>
+            <input type="text" id="taskName" name="title" placeholder="Task" required><br>
             <label for="taskDate">Enter the due date:</label><br>
-            <input type="date" id="taskDate" required><br>
+            <input type="date" id="taskDate" name="due_date" required><br>
+            <button type="submit">Submit</button>
         </form>
     </div>
-    <button onclick="add()">Submit</button>
     <div class="view">
         <h1>Tasks</h1>
         <table>
@@ -92,7 +92,18 @@
                 </tr>
             </thead>
             <tbody id="tbody">
-                <!-- Tasks will be dynamically added here -->
+                {% for task in tasks %}
+                <tr class="{{ 'completed' if task.status == 'Completed' else '' }}">
+                    <td>{{ task.title }}</td>
+                    <td>{{ task.created.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ task.due_date }}</td>
+                    <td class="status">{{ task.status }}</td>
+                    <td>
+                        <input type="checkbox" {% if task.status == 'Completed' %} checked {% endif %}
+                        onchange="toggleStatus(this, {{ task.id }})">
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -100,44 +111,35 @@
         <p>By - Mayank Bansal</p>
     </footer>
     <script>
-        function add() {
-            const taskName = document.getElementById("taskName").value;
-            const taskDate = document.getElementById("taskDate").value;
-            const tbody = document.getElementById("tbody");
+    function toggleStatus(checkbox, taskId) {
+        const statusCell = checkbox.parentElement.parentElement.querySelector('.status');
+        const row = checkbox.parentElement.parentElement;
 
-            if (taskName && taskDate) {
-                const today = new Date().toISOString().split("T")[0];
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${taskName}</td>
-                    <td>${today}</td>
-                    <td>${taskDate}</td>
-                    <td class="status">Pending</td>
-                    <td><input type="checkbox" onchange="toggleStatus(this)"></td>
-                `;
-                tbody.prepend(row);
-                document.getElementById("taskName").value = "";
-                document.getElementById("taskDate").value = "";
+        // Send AJAX request to update task status
+        fetch(`/update_status/${taskId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the status cell based on the response
+            statusCell.textContent = data.status;
+            
+            // Change the row color based on the status
+            if (data.status === 'Completed') {
+                row.classList.add('completed');
             } else {
-                alert("Please fill out both fields.");
+                row.classList.remove('completed');
             }
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 
-        function toggleStatus(checkbox) {
-            const row = checkbox.parentElement.parentElement;
-            const statusCell = row.querySelector(".status");
-
-            if (checkbox.checked) {
-                statusCell.textContent = "Completed";
-                row.classList.add("completed");
-                document.getElementById("tbody").appendChild(row); // Move to the bottom
-            } else {
-                statusCell.textContent = "Pending";
-                row.classList.remove("completed");
-                document.getElementById("tbody").prepend(row); // Move to the top
-            }
-        }
-    </script>
 </body>
 
 </html>
