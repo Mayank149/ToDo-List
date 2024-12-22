@@ -4,37 +4,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToDo List</title>
+    <title>To-Do List</title>
     <style>
-        body{
+        body {
             text-align: center;
-            background-color:gray;
+            background-color: gray;
         }
-        .heading{
+
+        .heading {
             border: dashed black 6px;
-            background-color:slategray;
+            background-color: slategray;
         }
-        .add{
+
+        .add {
             margin: 60px;
             font-size: x-large;
-            
         }
-        input{
-            width: 400px;
+
+        input {
+            width: 90%;
+            max-width: 400px;
             height: 30px;
             margin-top: 10px;
             margin-bottom: 20px;
         }
-        button{
-            width: 250px;
+
+        button {
+            width: 90%;
+            max-width: 250px;
             height: 40px;
-            margin-bottom: 20px;
         }
-        table{
+
+        table {
             font-size: x-large;
+            margin: 0 auto;
         }
-        th{
-            
+
+        th {
+            padding: 10px 30px;
+        }
+
+        .view h1 {
+            border: dashed black 2px;
+            padding: 10px;
+            display: inline-block;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: medium;
         }
     </style>
 </head>
@@ -42,33 +60,59 @@
 <body>
     <div class="heading">
         <h1>To-Do List</h1>
-        <h3>By- Mayank Bansal</h3>
     </div>
     <div class="add">
         <form>
-            <label for="task">Enter the Task:-</label><br>
-            <input type="text" id="task" placeholder="Task"><br>
-            <label for="task">Enter the due date:-</label><br>
-            <input type="text" id="task" placeholder="Due-Date"><br>
+            <label for="taskName">Enter the Task:</label><br>
+            <input type="text" id="taskName" placeholder="Task" required><br>
+            <label for="taskDate">Enter the due date:</label><br>
+            <input type="date" id="taskDate" required><br>
         </form>
     </div>
     <button onclick="add()">Submit</button>
     <div class="view">
-        <h2>Tasks</h2>
+        <h1>Tasks</h1>
         <table>
+            <caption>List of Tasks</caption>
             <thead>
-                <th>Task</th>
-                <th>Date Added</th>
-                <th>Due Date</th>
-                <th>Status</th>
+                <tr>
+                    <th>Task</th>
+                    <th>Date Added</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
             </thead>
             <tbody id="tbody">
-                
+                <!-- Tasks will be dynamically added here -->
             </tbody>
         </table>
     </div>
+    <footer>
+        <p>By - Mayank Bansal</p>
+    </footer>   
     <script>
+        function add() {
+            const taskName = document.getElementById("taskName").value;
+            const taskDate = document.getElementById("taskDate").value;
+            const tbody = document.getElementById("tbody");
 
+            if (taskName && taskDate) {
+                const today = new Date().toISOString().split("T")[0];
+                const row = `
+                    <tr>
+                        <td>${taskName}</td>
+                        <td>${today}</td>
+                        <td>${taskDate}</td>
+                        <td>Pending</td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML("beforeend", row);
+                document.getElementById("taskName").value = "";
+                document.getElementById("taskDate").value = "";
+            } else {
+                alert("Please fill out both fields.");
+            }
+        }
     </script>
 </body>
 
