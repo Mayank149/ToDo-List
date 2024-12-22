@@ -1,0 +1,1 @@
+The Static folder is used to render or show file as it is in the browser where our flask app is running
