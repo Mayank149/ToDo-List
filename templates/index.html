@@ -38,10 +38,12 @@
         table {
             font-size: x-large;
             margin: 0 auto;
+            background-color: aliceblue;
         }
 
-        th {
+        th, td {
             padding: 10px 30px;
+            text-align: center;
         }
 
         .view h1 {
@@ -52,7 +54,13 @@
 
         footer {
             margin-top: 20px;
-            font-size: medium;
+            font-size: large;
+            position: fixed;
+            bottom: 0;
+        }
+
+        .completed {
+            background-color: lightgray;
         }
     </style>
 </head>
@@ -80,6 +88,7 @@
                     <th>Date Added</th>
                     <th>Due Date</th>
                     <th>Status</th>
+                    <th>Mark Complete</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -89,7 +98,7 @@
     </div>
     <footer>
         <p>By - Mayank Bansal</p>
-    </footer>   
+    </footer>
     <script>
         function add() {
             const taskName = document.getElementById("taskName").value;
@@ -98,19 +107,34 @@
 
             if (taskName && taskDate) {
                 const today = new Date().toISOString().split("T")[0];
-                const row = `
-                    <tr>
-                        <td>${taskName}</td>
-                        <td>${today}</td>
-                        <td>${taskDate}</td>
-                        <td>Pending</td>
-                    </tr>
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${taskName}</td>
+                    <td>${today}</td>
+                    <td>${taskDate}</td>
+                    <td class="status">Pending</td>
+                    <td><input type="checkbox" onchange="toggleStatus(this)"></td>
                 `;
-                tbody.insertAdjacentHTML("beforeend", row);
+                tbody.prepend(row);
                 document.getElementById("taskName").value = "";
                 document.getElementById("taskDate").value = "";
             } else {
                 alert("Please fill out both fields.");
+            }
+        }
+
+        function toggleStatus(checkbox) {
+            const row = checkbox.parentElement.parentElement;
+            const statusCell = row.querySelector(".status");
+
+            if (checkbox.checked) {
+                statusCell.textContent = "Completed";
+                row.classList.add("completed");
+                document.getElementById("tbody").appendChild(row); // Move to the bottom
+            } else {
+                statusCell.textContent = "Pending";
+                row.classList.remove("completed");
+                document.getElementById("tbody").prepend(row); // Move to the top
             }
         }
     </script>
