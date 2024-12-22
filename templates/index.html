@@ -102,6 +102,7 @@
                         <input type="checkbox" {% if task.status == 'Completed' %} checked {% endif %}
                         onchange="toggleStatus(this, {{ task.id }})">
                     </td>
+                    <td><a href="/Delete/{{task.id}}" type="button" class="delete">Delete</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

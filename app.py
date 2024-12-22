@@ -62,6 +62,13 @@ def update_status(task_id):
 
     return jsonify({"status": task.status})
 
+@app.route('/Delete/<int:task_id>')
+def delete(task_id):
+    task = Todo.query.get_or_404(task_id)
+    db.session.delete(task)
+    db.session.commit()
+    return redirect(url_for('index'))
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Create the database tables
